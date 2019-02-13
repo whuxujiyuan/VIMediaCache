@@ -131,9 +131,11 @@ static NSString *kURLKey = @"kURLKey";
 #pragma mark - Update
 
 - (void)save {
-    @synchronized (self.internalCacheFragments) {
-        [NSKeyedArchiver archiveRootObject:self toFile:self.filePath];
-    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        @synchronized (self.internalCacheFragments) {
+            [NSKeyedArchiver archiveRootObject:self toFile:self.filePath];
+        }
+    });
 }
 
 - (void)addCacheFragment:(NSRange)fragment {
